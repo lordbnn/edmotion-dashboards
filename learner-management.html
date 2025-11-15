@@ -686,33 +686,327 @@
   </div>
 
   <script>
-    // Simple filter functionality
+    // ============================================
+    // CONFIGURATION - EDIT THESE VALUES
+    // ============================================
+    const SHEET_ID = '1tzh-MGcc88JWnVHKSyTzsqmxSfdpVxnp3NZ4tHbHzDw'; // Replace with your Google Sheet ID
+    const API_KEY = 'AIzaSyBtsqQqCykFqZEyxTAm6BnbMM5nIRg5yGE';   // Replace with your Google API Key
+    const SHEET_NAME = 'github_LearnersDB';           // Change if your sheet has a different name
+
+    // ============================================
+    // GOOGLE SHEETS CONNECTION
+    // ============================================
+    let learners = [];
+
+    // Fetch data from Google Sheets
+    async function fetchLearnersFromSheet() {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
+      
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.values && data.values.length > 1) {
+          // Skip header row (index 0) and convert to objects
+          learners = data.values.slice(1).map(row => ({
+            name: row[0] || '',
+            email: row[1] || '',
+            cohort: row[2] || '',
+            status: row[3] || '',
+            progress: parseInt(row[4]) || 0,
+            mentor: row[5] || '',
+            lastActive: row[6] || ''
+          }));
+          
+          applyFilters();
+          showMessage('✅ Data loaded successfully from Google Sheets!', 'success');
+        } else {
+          showMessage('⚠️ No data found in sheet', 'warning');
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        showMessage('❌ Error loading data. Check console for details.', 'error');
+        // Load sample data as fallback
+        loadSampleData();
+      }
+    }
+
+    // Load sample data (fallback)
+    function loadSampleData() {
+      learners = [
+        {
+          name: "Adewale Ogunlesi",
+          email: "adewale.o@email.com",
+          cohort: "Cohort 1",
+          status: "Active",
+          progress: 85,
+          mentor: "Byron Neji",
+          lastActive: "2 hours ago"
+        },
+        {
+          name: "Chidinma Ikenna",
+          email: "chidinma.i@email.com",
+          cohort: "Cohort 2",
+          status: "Active - Apprentice",
+          progress: 92,
+          mentor: "Sarah Chen",
+          lastActive: "5 hours ago"
+        },
+        {
+          name: "Oluwaseun Musa",
+          email: "oluwaseun.m@email.com",
+          cohort: "Cohort 1",
+          status: "Active",
+          progress: 67,
+          mentor: "Michael Ade",
+          lastActive: "1 day ago"
+        },
+        {
+          name: "Fatima Abubakar",
+          email: "fatima.a@email.com",
+          cohort: "Cohort 2",
+          status: "Pending",
+          progress: 15,
+          mentor: "Unassigned",
+          lastActive: "3 days ago"
+        },
+        {
+          name: "Emmanuel Okafor",
+          email: "emmanuel.o@email.com",
+          cohort: "Cohort 1",
+          status: "Active - Apprentice",
+          progress: 78,
+          mentor: "Byron Neji",
+          lastActive: "6 hours ago"
+        },
+        {
+          name: "Ngozi Eze",
+          email: "ngozi.e@email.com",
+          cohort: "Cohort 2",
+          status: "Active",
+          progress: 55,
+          mentor: "Sarah Chen",
+          lastActive: "12 hours ago"
+        },
+        {
+          name: "Tunde Adeyemi",
+          email: "tunde.a@email.com",
+          cohort: "Cohort 1",
+          status: "Active",
+          progress: 43,
+          mentor: "Michael Ade",
+          lastActive: "8 hours ago"
+        },
+        {
+          name: "Aisha Abdullahi",
+          email: "aisha.a@email.com",
+          cohort: "Cohort 2",
+          status: "Active - Apprentice",
+          progress: 88,
+          mentor: "Byron Neji",
+          lastActive: "4 hours ago"
+        }
+      ];
+      applyFilters();
+    }
+
+    // Show message to user
+    function showMessage(text, type) {
+      const existing = document.querySelector('.message-banner');
+      if (existing) existing.remove();
+
+      const banner = document.createElement('div');
+      banner.className = `message-banner ${type}`;
+      banner.textContent = text;
+      banner.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 16px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      `;
+      
+      if (type === 'success') {
+        banner.style.background = '#dcfce7';
+        banner.style.color = '#166534';
+        banner.style.border = '2px solid #22c55e';
+      } else if (type === 'error') {
+        banner.style.background = '#fee2e2';
+        banner.style.color = '#991b1b';
+        banner.style.border = '2px solid #ef4444';
+      } else {
+        banner.style.background = '#fef3c7';
+        banner.style.color = '#92400e';
+        banner.style.border = '2px solid #fbbf24';
+      }
+
+      document.body.appendChild(banner);
+      setTimeout(() => banner.remove(), 4000);
+    }
+
+    // Get initials from name
+    function getInitials(name) {
+      return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    }
+
+    // Get badge class based on status
+    function getStatusBadgeClass(status) {
+      if (status.includes('Apprentice')) return 'badge-active';
+      if (status === 'Active') return 'badge-active';
+      if (status === 'Pending') return 'badge-pending';
+      return 'badge-inactive';
+    }
+
+    // Render table rows
+    function renderTable(filteredLearners) {
+      const tbody = document.querySelector('tbody');
+      tbody.innerHTML = '';
+
+      if (filteredLearners.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 40px; color: #9ca3af;">
+              No learners found matching your criteria
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      filteredLearners.forEach(learner => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>
+            <div class="learner-cell">
+              <div class="avatar">${getInitials(learner.name)}</div>
+              <div class="learner-info">
+                <span class="learner-name">${learner.name}</span>
+                <span class="learner-email">${learner.email}</span>
+              </div>
+            </div>
+          </td>
+          <td><span class="badge badge-cohort">${learner.cohort}</span></td>
+          <td><span class="badge ${getStatusBadgeClass(learner.status)}">${learner.status}</span></td>
+          <td>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${learner.progress}%;"></div>
+            </div>
+            <div class="progress-text">${learner.progress}% complete</div>
+          </td>
+          <td>${learner.mentor}</td>
+          <td>${learner.lastActive}</td>
+          <td>
+            <div class="quick-actions">
+              <button class="action-btn" title="View Profile">👤</button>
+              <button class="action-btn" title="Send Message">💬</button>
+              <button class="action-btn" title="More">⋯</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      // Update stats
+      updateStats(filteredLearners);
+    }
+
+    // Update statistics
+    function updateStats(filteredLearners) {
+      const total = learners.length;
+      const active = learners.filter(l => l.status.includes('Active')).length;
+      const apprentices = learners.filter(l => l.status.includes('Apprentice')).length;
+      const avgCompletion = total > 0 ? Math.round(learners.reduce((sum, l) => sum + l.progress, 0) / total) : 0;
+
+      document.querySelectorAll('.stat-value')[0].textContent = total;
+      document.querySelectorAll('.stat-value')[1].textContent = active;
+      document.querySelectorAll('.stat-value')[2].textContent = apprentices;
+      document.querySelectorAll('.stat-value')[3].textContent = avgCompletion + '%';
+    }
+
+    // Filter functionality
+    let currentFilter = 'all';
+    let searchTerm = '';
+
+    function applyFilters() {
+      let filtered = [...learners];
+
+      // Apply status filter
+      if (currentFilter !== 'all') {
+        if (currentFilter === 'active') {
+          filtered = filtered.filter(l => l.status.includes('Active'));
+        } else if (currentFilter === 'pending') {
+          filtered = filtered.filter(l => l.status === 'Pending');
+        } else if (currentFilter === 'apprentices') {
+          filtered = filtered.filter(l => l.status.includes('Apprentice'));
+        } else if (currentFilter.startsWith('cohort')) {
+          const cohortNum = currentFilter.replace('cohort', '');
+          filtered = filtered.filter(l => l.cohort === `Cohort ${cohortNum}`);
+        }
+      }
+
+      // Apply search
+      if (searchTerm) {
+        filtered = filtered.filter(l => 
+          l.name.toLowerCase().includes(searchTerm) || 
+          l.email.toLowerCase().includes(searchTerm)
+        );
+      }
+
+      renderTable(filtered);
+    }
+
+    // Filter buttons
     const filterBtns = document.querySelectorAll('.filter-btn');
     filterBtns.forEach(btn => {
       btn.addEventListener('click', function() {
         filterBtns.forEach(b => b.classList.remove('active'));
         this.classList.add('active');
+
+        const text = this.textContent.toLowerCase();
+        if (text.includes('all')) currentFilter = 'all';
+        else if (text.includes('active (')) currentFilter = 'active';
+        else if (text.includes('pending')) currentFilter = 'pending';
+        else if (text.includes('apprentices')) currentFilter = 'apprentices';
+        else if (text.includes('cohort 1')) currentFilter = 'cohort1';
+        else if (text.includes('cohort 2')) currentFilter = 'cohort2';
+
+        applyFilters();
       });
     });
 
     // Search functionality
     const searchInput = document.querySelector('.search-input');
-    const tableRows = document.querySelectorAll('tbody tr');
-
     searchInput.addEventListener('input', function(e) {
-      const searchTerm = e.target.value.toLowerCase();
-      
-      tableRows.forEach(row => {
-        const learnerName = row.querySelector('.learner-name').textContent.toLowerCase();
-        const learnerEmail = row.querySelector('.learner-email').textContent.toLowerCase();
-        
-        if (learnerName.includes(searchTerm) || learnerEmail.includes(searchTerm)) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
-      });
+      searchTerm = e.target.value.toLowerCase();
+      applyFilters();
     });
+
+    // Refresh button
+    const addLearnerBtn = document.querySelector('.btn-primary');
+    addLearnerBtn.innerHTML = '<span>🔄</span> Refresh from Sheet';
+    addLearnerBtn.addEventListener('click', fetchLearnersFromSheet);
+
+    // Initial load
+    window.addEventListener('load', function() {
+      // Check if API key and Sheet ID are configured
+      if (SHEET_ID === 'YOUR_SHEET_ID_HERE' || API_KEY === 'YOUR_API_KEY_HERE') {
+        showMessage('⚠️ Please configure your Google Sheets credentials', 'warning');
+        loadSampleData();
+      } else {
+        fetchLearnersFromSheet();
+      }
+    });
+
+    // Auto-refresh every 30 seconds (optional - remove if not needed)
+    setInterval(() => {
+      if (SHEET_ID !== 'YOUR_SHEET_ID_HERE' && API_KEY !== 'YOUR_API_KEY_HERE') {
+        fetchLearnersFromSheet();
+      }
+    }, 30000);
   </script>
 </body>
 </html>
