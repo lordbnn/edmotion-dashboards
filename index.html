@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edmotion OS - Dashboards</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    body::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+      animation: fadeInDown 0.6s ease;
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      background: white;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      font-weight: 800;
+      color: #3b82f6;
+      margin: 0 auto 24px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 12px;
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.95);
+      font-weight: 400;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .dashboard-card {
+      background: white;
+      border-radius: 20px;
+      padding: 32px;
+      text-decoration: none;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      animation: fadeInUp 0.6s ease;
+      animation-fill-mode: both;
+    }
+
+    .dashboard-card:nth-child(1) { animation-delay: 0.1s; }
+    .dashboard-card:nth-child(2) { animation-delay: 0.2s; }
+    .dashboard-card:nth-child(3) { animation-delay: 0.3s; }
+    .dashboard-card:nth-child(4) { animation-delay: 0.4s; }
+    .dashboard-card:nth-child(5) { animation-delay: 0.5s; }
+    .dashboard-card:nth-child(6) { animation-delay: 0.6s; }
+
+    .dashboard-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #3b82f6, #2563eb);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+    }
+
+    .dashboard-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .dashboard-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin-bottom: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .dashboard-card:hover .dashboard-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .icon-blue {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1));
+    }
+
+    .icon-green {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.1));
+    }
+
+    .icon-purple {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(147, 51, 234, 0.1));
+    }
+
+    .icon-orange {
+      background: linear-gradient(135deg, rgba(251, 146, 60, 0.1), rgba(249, 115, 22, 0.1));
+    }
+
+    .icon-pink {
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(219, 39, 119, 0.1));
+    }
+
+    .icon-teal {
+      background: linear-gradient(135deg, rgba(20, 184, 166, 0.1), rgba(13, 148, 136, 0.1));
+    }
+
+    .dashboard-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 8px;
+    }
+
+    .dashboard-desc {
+      font-size: 15px;
+      color: #6b7280;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .dashboard-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #f3f4f6;
+    }
+
+    .meta-badge {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+
+    .badge-active {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .badge-beta {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      animation: fadeIn 1s ease 0.8s both;
+    }
+
+    .footer-text {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .footer-link:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 36px;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .subtitle {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">E</div>
+      <h1>Edmotion OS</h1>
+      <p class="subtitle">Internal Operations System - Select a dashboard to continue</p>
+    </div>
+
+    <div class="dashboard-grid">
+      <a href="operations-dashboard.html" class="dashboard-card">
+        <div class="dashboard-icon icon-blue">🏢</div>
+        <div class="dashboard-title">Operations Dashboard</div>
+        <div class="dashboard-desc">
+          Central command center for managing the academy, apprenticeships, and community ecosystem.
+        </div>
+        <div class="dashboard-meta">
+          <span class="meta-badge badge-active">Live</span>
+          <span class="meta-badge">Main</span>
+        </div>
+      </a>
+
+      <a href="learner-management.html" class="dashboard-card">
+        <div class="dashboard-icon icon-green">👥</div>
+        <div class="dashboard-title">Learner Management</div>
+        <div class="dashboard-desc">
+          Track progress, manage cohorts, and support learner success across all programs.
+        </div>
+        <div class="dashboard-meta">
+          <span class="meta-badge badge-active">Live</span>
+          <span class="meta-badge">Google Sheets Connected</span>
+        </div>
+      </a>
+
+      <a href="analytics-dashboard.html" class="dashboard-card">
+        <div class="dashboard-icon icon-purple">📊</div>
+        <div class="dashboard-title">Analytics Dashboard</div>
+        <div class="dashboard-desc">
+          Real-time insights into learner performance, engagement, and program effectiveness.
+        </div>
+        <div class="dashboard-meta">
+          <span class="meta-badge badge-active">Live</span>
+          <span class="meta-badge">Real-time</span>
+        </div>
+      </a>
+
+      <a href="partnership-management.html" class="dashboard-card">
+        <div class="dashboard-icon icon-orange">🤝</div>
+        <div class="dashboard-title">Partnership Management</div>
+        <div class="dashboard-desc">
+          Manage partner relationships, client projects, and apprenticeship placements.
+        </div>
+        <div class="dashboard-meta">
+          <span class="meta-badge badge-beta">Coming Soon</span>
+        </div>
+      </a>
+
+      <a href="content-delivery.html" class="dashboard-card">
+        <div class="dashboard-icon icon-pink">📚</div>
+        <div class="dashboard-title">Content Delivery</div>
+        <div class="dashboard-desc">
+          Manage curriculum, schedule sessions, and track content completion across programs.
+        </div>
+        <div class="dashboard-meta">
+          <span class="meta-badge badge-beta">Coming Soon</span>
+        </div>
+      </a>
+
+      <a href="project-gig-board.html" class="dashboard-card">
+        <div class="dashboard-icon icon-teal">💼</div>
+        <div class="dashboard-title">Project & Gig Board</div>
+        <div class="dashboard-desc">
+          Manage micro-projects, apprenticeship tasks, and freelance opportunities.
+        </div>
+        <div class="dashboard-meta">
+          <span class="meta-badge badge-beta">Coming Soon</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="footer">
+      <p class="footer-text">Edmotion Operations System v1.0 - Building Africa's Data Leaders</p>
+      <div class="footer-links">
+        <a href="#" class="footer-link">📖 Documentation</a>
+        <a href="#" class="footer-link">⚙️ Settings</a>
+        <a href="#" class="footer-link">👤 Account</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
