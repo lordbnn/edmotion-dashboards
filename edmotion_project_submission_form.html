@@ -472,6 +472,28 @@
             display: none;
         }
         
+        /* Debug Console */
+        .debug-console {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #0f0;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 11px;
+            max-width: 300px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            z-index: 9999;
+        }
+        
+        .debug-console.active {
+            display: block;
+        }
+        
         /* Mobile Responsiveness */
         @media (max-width: 600px) {
             .wizard-header h1 {
@@ -517,18 +539,14 @@
                 </div>
                 <div class="progress-step" data-step="4">
                     <div class="step-number"><span>4</span></div>
-                    <div class="step-label">Requirements</div>
+                    <div class="step-label">Scope</div>
                 </div>
                 <div class="progress-step" data-step="5">
                     <div class="step-number"><span>5</span></div>
-                    <div class="step-label">Matching</div>
+                    <div class="step-label">Details</div>
                 </div>
                 <div class="progress-step" data-step="6">
                     <div class="step-number"><span>6</span></div>
-                    <div class="step-label">Details</div>
-                </div>
-                <div class="progress-step" data-step="7">
-                    <div class="step-number"><span>7</span></div>
                     <div class="step-label">Review</div>
                 </div>
             </div>
@@ -695,45 +713,44 @@
                         </select>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="budgetRange">Budget Range (USD) <span class="required">*</span></label>
-                        <select id="budgetRange" name="budgetRange" required>
-                            <option value="">Select your budget...</option>
-                            <option value="less-50">Less than $50</option>
-                            <option value="50-100">$50 - $100</option>
-                            <option value="100-250">$100 - $250</option>
-                            <option value="250-500">$250 - $500</option>
-                            <option value="500-1000">$500 - $1,000</option>
-                            <option value="1000-2500">$1,000 - $2,500</option>
-                            <option value="2500-5000">$2,500 - $5,000</option>
-                            <option value="5000-plus">$5,000+</option>
-                            <option value="negotiable">Open to negotiation</option>
-                        </select>
-                    </div>
-                    
                     <div class="two-column">
                         <div class="form-group">
-                            <label for="paymentTerms">Payment Terms <span class="required">*</span></label>
-                            <select id="paymentTerms" name="paymentTerms" required>
-                                <option value="">Select payment terms...</option>
-                                <option value="fixed">Fixed Price</option>
-                                <option value="milestone">Milestone-based</option>
-                                <option value="hourly">Hourly rate</option>
-                                <option value="flexible">Flexible</option>
-                            </select>
+                            <label for="budgetAmount">Budget Amount <span class="required">*</span></label>
+                            <input type="number" id="budgetAmount" name="budgetAmount" required 
+                                   placeholder="Enter amount (e.g., 5000)" min="0" step="0.01">
+                            <span class="helper-text">Enter your budget in numbers only</span>
                         </div>
                         
                         <div class="form-group">
                             <label for="currency">Currency <span class="required">*</span></label>
                             <select id="currency" name="currency" required>
                                 <option value="">Select currency...</option>
-                                <option value="usd">USD - US Dollar</option>
-                                <option value="ngn">NGN - Nigerian Naira</option>
-                                <option value="gbp">GBP - British Pound</option>
-                                <option value="eur">EUR - Euro</option>
-                                <option value="other">Other</option>
+                                <option value="USD">USD - US Dollar</option>
+                                <option value="NGN">NGN - Nigerian Naira</option>
+                                <option value="GBP">GBP - British Pound</option>
+                                <option value="EUR">EUR - Euro</option>
+                                <option value="CAD">CAD - Canadian Dollar</option>
+                                <option value="AUD">AUD - Australian Dollar</option>
+                                <option value="INR">INR - Indian Rupee</option>
+                                <option value="CNY">CNY - Chinese Yuan</option>
+                                <option value="JPY">JPY - Japanese Yen</option>
+                                <option value="ZAR">ZAR - South African Rand</option>
+                                <option value="KES">KES - Kenyan Shilling</option>
+                                <option value="GHS">GHS - Ghanaian Cedi</option>
+                                <option value="Other">Other - Specify in notes</option>
                             </select>
                         </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="paymentTerms">Payment Terms <span class="required">*</span></label>
+                        <select id="paymentTerms" name="paymentTerms" required>
+                            <option value="">Select payment terms...</option>
+                            <option value="fixed">Fixed Price - One payment</option>
+                            <option value="milestone">Milestone-based payments</option>
+                            <option value="hourly">Hourly rate</option>
+                            <option value="flexible">Flexible/Negotiable</option>
+                        </select>
                     </div>
                 </div>
 
@@ -782,78 +799,8 @@
                     </div>
                 </div>
 
-                <!-- Step 5: Collaboration & Analyst Matching -->
+                <!-- Step 5: Additional Information -->
                 <div class="form-step" data-step="5">
-                    <h2 class="step-title">Analyst Matching Preferences</h2>
-                    <p class="step-description">Help us find the perfect Analyst for your project</p>
-                    
-                    <div class="form-group">
-                        <label for="skillLevel">Minimum Skill Level Required <span class="required">*</span></label>
-                        <select id="skillLevel" name="skillLevel" required>
-                            <option value="">Select skill level...</option>
-                            <option value="beginner">🌱 Beginner (Learning fundamentals, needs guidance)</option>
-                            <option value="intermediate">🌿 Intermediate (Can work independently with some support)</option>
-                            <option value="advanced">🌳 Advanced (Fully independent, minimal supervision)</option>
-                            <option value="any">✨ Any level (willing to mentor)</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="guidanceLevel">How much guidance can you provide? <span class="required">*</span></label>
-                        <select id="guidanceLevel" name="guidanceLevel" required>
-                            <option value="">Select guidance level...</option>
-                            <option value="high">👥 High - Daily check-ins and detailed feedback</option>
-                            <option value="medium">💬 Medium - Regular updates and some guidance</option>
-                            <option value="low">📅 Low - Occasional check-ins only</option>
-                            <option value="none">🚀 None - Fully autonomous work expected</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="updateFrequency">How often would you like updates? <span class="required">*</span></label>
-                        <select id="updateFrequency" name="updateFrequency" required>
-                            <option value="">Select update frequency...</option>
-                            <option value="daily">📅 Daily updates</option>
-                            <option value="every-2-days">📆 Every 2-3 days</option>
-                            <option value="weekly">🗓️ Weekly</option>
-                            <option value="milestone">🎯 At milestone completion only</option>
-                            <option value="flexible">✨ Flexible</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="mentoringWilling">Are you open to mentoring? <span class="required">*</span></label>
-                        <div class="radio-group">
-                            <div class="radio-item">
-                                <input type="radio" id="mentor-yes" name="mentoringWilling" value="yes" required>
-                                <label for="mentor-yes">🌟 Yes - Happy to provide learning opportunities</label>
-                            </div>
-                            <div class="radio-item">
-                                <input type="radio" id="mentor-limited" name="mentoringWilling" value="limited">
-                                <label for="mentor-limited">💡 Limited - Can answer questions but not actively mentor</label>
-                            </div>
-                            <div class="radio-item">
-                                <input type="radio" id="mentor-no" name="mentoringWilling" value="no">
-                                <label for="mentor-no">⚡ No - Need someone who can work independently</label>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="two-column">
-                        <div class="form-group">
-                            <label for="timezonePreference">Time Zone Preference</label>
-                            <input type="text" id="timezonePreference" name="timezonePreference" placeholder="e.g., GMT+1, EST, or 'No preference'">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="languageReq">Language Requirements</label>
-                            <input type="text" id="languageReq" name="languageReq" placeholder="e.g., English, Spanish">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 6: Additional Information -->
-                <div class="form-step" data-step="6">
                     <h2 class="step-title">Almost there! Just a few more details</h2>
                     <p class="step-description">This helps us ensure the best match</p>
                     
@@ -958,8 +905,8 @@
                     </div>
                 </div>
 
-                <!-- Step 7: Review & Submit -->
-                <div class="form-step" data-step="7">
+                <!-- Step 6: Review & Submit -->
+                <div class="form-step" data-step="6">
                     <h2 class="step-title">Review Your Project Submission</h2>
                     <p class="step-description">Please review your information before submitting</p>
                     
@@ -1005,12 +952,14 @@
             <div id="successMessage" class="success-message">
                 <h3>🎉 Success!</h3>
                 <p>Your project has been successfully submitted! We'll match you with the perfect Analyst within 24-48 hours.</p>
+                <p style="font-size: 12px; margin-top: 10px;">Reference ID: <span id="refId"></span></p>
             </div>
             
             <!-- Error Message -->
             <div id="errorMessage" class="error-message">
                 <h3>⚠️ Submission Error</h3>
                 <p>There was an error submitting your form. Please try again or contact support.</p>
+                <p style="font-size: 12px; margin-top: 10px;" id="errorDetails"></p>
             </div>
 
             <!-- Navigation Footer -->
@@ -1031,15 +980,41 @@
         </form>
     </div>
 
+    <!-- Debug Console (hidden by default) -->
+    <div id="debugConsole" class="debug-console"></div>
+
     <script>
-        // Google Apps Script Web App URL - REPLACE WITH YOUR OWN
+        // Google Apps Script Web App URL
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzdgbiLLP7YabBURgP4tPcS_a8lb8A5Xn94XlYN7KepfXB1knyEbWpCh7BmKKAW2I841A/exec';
         
+        // Enable debug mode (set to true for troubleshooting)
+        const DEBUG_MODE = true;
+        
         let currentStep = 1;
-        const totalSteps = 7;
+        const totalSteps = 6;
+        
+        // Debug logging
+        function debugLog(message, data = null) {
+            if (DEBUG_MODE) {
+                const timestamp = new Date().toTimeString().split(' ')[0];
+                const logMessage = `[${timestamp}] ${message}`;
+                console.log(logMessage, data || '');
+                
+                const debugConsole = document.getElementById('debugConsole');
+                if (debugConsole) {
+                    debugConsole.classList.add('active');
+                    debugConsole.innerHTML += `<div>${logMessage}</div>`;
+                    if (data) {
+                        debugConsole.innerHTML += `<div style="margin-left: 10px; color: #ff0;">${JSON.stringify(data, null, 2)}</div>`;
+                    }
+                    debugConsole.scrollTop = debugConsole.scrollHeight;
+                }
+            }
+        }
         
         // Initialize wizard
         document.addEventListener('DOMContentLoaded', function() {
+            debugLog('Form initialized');
             setupEventListeners();
             updateProgressBar();
             setupCheckboxRadioStyles();
@@ -1054,7 +1029,11 @@
             document.getElementById('prevBtn').addEventListener('click', prevStep);
             
             // Form submission
-            document.getElementById('projectForm').addEventListener('submit', submitForm);
+            document.getElementById('projectForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                debugLog('Form submit triggered');
+                submitForm();
+            });
             
             // Dynamic field interactions
             document.getElementById('startDate').addEventListener('change', function() {
@@ -1074,11 +1053,9 @@
             // Radio buttons
             document.querySelectorAll('input[type="radio"]').forEach(radio => {
                 radio.addEventListener('change', function() {
-                    // Clear all checked states in this group
                     document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
                         r.closest('.radio-item').classList.remove('checked');
                     });
-                    // Add checked state to selected
                     if (this.checked) {
                         this.closest('.radio-item').classList.add('checked');
                     }
@@ -1104,11 +1081,9 @@
             }
             
             if (currentStep < totalSteps) {
-                // If moving to review step, populate review content
-                if (currentStep === 6) {
+                if (currentStep === 5) {
                     populateReview();
                 }
-                
                 currentStep++;
                 showStep(currentStep);
                 updateProgressBar();
@@ -1126,23 +1101,18 @@
         
         // Show specific step
         function showStep(step) {
-            // Hide all steps
             document.querySelectorAll('.form-step').forEach(s => {
                 s.classList.remove('active');
             });
             
-            // Show current step
             document.querySelector(`.form-step[data-step="${step}"]`).classList.add('active');
             
-            // Update buttons
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
             const submitBtn = document.getElementById('submitBtn');
             
-            // Show/hide previous button
             prevBtn.style.display = step === 1 ? 'none' : 'block';
             
-            // Show/hide next/submit buttons
             if (step === totalSteps) {
                 nextBtn.style.display = 'none';
                 submitBtn.style.display = 'block';
@@ -1151,7 +1121,6 @@
                 submitBtn.style.display = 'none';
             }
             
-            // Scroll to top of form
             document.querySelector('.wizard-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
         
@@ -1183,21 +1152,9 @@
                     isValid = false;
                     field.classList.add('field-error');
                     
-                    // Show error text if it exists
                     const errorText = field.parentElement.querySelector('.error-text');
                     if (errorText) {
                         errorText.style.display = 'block';
-                    }
-                    
-                    // Special handling for radio groups
-                    if (field.type === 'radio') {
-                        const radioGroup = currentFormStep.querySelector(`.radio-group`);
-                        if (radioGroup && radioGroup.contains(field)) {
-                            const groupError = radioGroup.parentElement.querySelector('.error-text');
-                            if (groupError) {
-                                groupError.style.display = 'block';
-                            }
-                        }
                     }
                 } else {
                     field.classList.remove('field-error');
@@ -1209,7 +1166,6 @@
             });
             
             if (!isValid) {
-                // Find first error field and focus it
                 const firstError = currentFormStep.querySelector('.field-error');
                 if (firstError) {
                     firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1232,7 +1188,6 @@
             const reviewContent = document.getElementById('reviewContent');
             const formData = new FormData(document.getElementById('projectForm'));
             
-            // Create review sections
             const sections = [
                 {
                     title: 'Contact Information',
@@ -1240,16 +1195,14 @@
                         { label: 'Name', key: 'contactName' },
                         { label: 'Company', key: 'companyName' },
                         { label: 'Email', key: 'email' },
-                        { label: 'Phone', key: 'phone' },
-                        { label: 'Contact Method', key: 'commMethod' }
+                        { label: 'Phone', key: 'phone' }
                     ]
                 },
                 {
                     title: 'Project Details',
                     fields: [
                         { label: 'Project Title', key: 'projectTitle' },
-                        { label: 'Category', key: 'projectCategory' },
-                        { label: 'Description', key: 'projectDescription' }
+                        { label: 'Category', key: 'projectCategory' }
                     ]
                 },
                 {
@@ -1257,8 +1210,8 @@
                     fields: [
                         { label: 'Start Date', key: 'startDate' },
                         { label: 'Deadline', key: 'deadline' },
-                        { label: 'Budget', key: 'budgetRange' },
-                        { label: 'Payment Terms', key: 'paymentTerms' }
+                        { label: 'Budget', key: 'budgetAmount' },
+                        { label: 'Currency', key: 'currency' }
                     ]
                 }
             ];
@@ -1269,7 +1222,11 @@
                     <h4>${section.title}</h4>`;
                 
                 section.fields.forEach(field => {
-                    const value = formData.get(field.key) || 'Not provided';
+                    let value = formData.get(field.key) || 'Not provided';
+                    if (field.key === 'budgetAmount') {
+                        const currency = formData.get('currency') || '';
+                        value = `${currency} ${value}`;
+                    }
                     html += `<div class="review-item">
                         <span class="review-label">${field.label}:</span>
                         <span class="review-value">${value}</span>
@@ -1283,11 +1240,12 @@
         }
         
         // Submit form
-        async function submitForm(e) {
-            e.preventDefault();
+        async function submitForm() {
+            debugLog('Starting form submission');
             
             // Validate last step
             if (!validateCurrentStep()) {
+                debugLog('Validation failed');
                 return;
             }
             
@@ -1295,6 +1253,8 @@
             const spinner = document.getElementById('spinner');
             const successMsg = document.getElementById('successMessage');
             const errorMsg = document.getElementById('errorMessage');
+            const wizardBody = document.querySelector('.wizard-body');
+            const wizardFooter = document.querySelector('.wizard-footer');
             
             // Hide messages
             successMsg.style.display = 'none';
@@ -1312,7 +1272,6 @@
             // Convert FormData to object
             for (let [key, value] of formData.entries()) {
                 if (data[key]) {
-                    // Handle multiple values (checkboxes)
                     if (Array.isArray(data[key])) {
                         data[key].push(value);
                     } else {
@@ -1323,32 +1282,52 @@
                 }
             }
             
-            // Add timestamp
+            // Add timestamp and reference ID
             data.timestamp = new Date().toISOString();
+            data.referenceId = 'ED' + Date.now();
+            
+            debugLog('Form data prepared', data);
             
             try {
-                // Send to Google Sheets via Apps Script
+                debugLog('Sending to Google Apps Script', GOOGLE_SCRIPT_URL);
+                
+                // Send to Google Sheets
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'text/plain',
                     },
                     body: JSON.stringify(data)
                 });
                 
-                // Hide form and show success
-                document.querySelector('.wizard-body').style.display = 'none';
-                document.querySelector('.wizard-footer').style.display = 'none';
+                debugLog('Request sent successfully');
+                
+                // Show success (we can't read response in no-cors mode)
+                document.getElementById('refId').textContent = data.referenceId;
+                wizardBody.style.display = 'none';
+                wizardFooter.style.display = 'none';
                 successMsg.style.display = 'block';
                 
-                // Optional: Redirect after success
+                // Reset form after 5 seconds
                 setTimeout(() => {
-                    // window.location.href = '/thank-you';
-                }, 3000);
+                    document.getElementById('projectForm').reset();
+                    currentStep = 1;
+                    showStep(currentStep);
+                    updateProgressBar();
+                    wizardBody.style.display = 'block';
+                    wizardFooter.style.display = 'flex';
+                    successMsg.style.display = 'none';
+                    
+                    // Clear debug console
+                    if (DEBUG_MODE) {
+                        document.getElementById('debugConsole').innerHTML = '';
+                    }
+                }, 5000);
                 
             } catch (error) {
-                console.error('Submission error:', error);
+                debugLog('Submission error', error.message);
+                document.getElementById('errorDetails').textContent = error.message;
                 errorMsg.style.display = 'block';
             } finally {
                 submitBtn.disabled = false;
