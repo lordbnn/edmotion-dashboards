@@ -1021,28 +1021,28 @@
         const totalSteps = 6; // Updated from 7 to 6
         
         // Debug logging function
-        function debugLog(message, type = 'info', data = null) {
-            const time = new Date().toLocaleTimeString();
-            const logDiv = document.getElementById('debugLog');
-            let className = 'debug-log-entry debug-info';
+        // function debugLog(message, type = 'info', data = null) {
+        //     const time = new Date().toLocaleTimeString();
+        //     const logDiv = document.getElementById('debugLog');
+        //     let className = 'debug-log-entry debug-info';
             
-            if (type === 'success') className = 'debug-log-entry debug-success';
-            if (type === 'error') className = 'debug-log-entry debug-error';
+        //     if (type === 'success') className = 'debug-log-entry debug-success';
+        //     if (type === 'error') className = 'debug-log-entry debug-error';
             
-            const entry = document.createElement('div');
-            entry.className = className;
-            entry.innerHTML = `[${time}] ${message}`;
+        //     const entry = document.createElement('div');
+        //     entry.className = className;
+        //     entry.innerHTML = `[${time}] ${message}`;
             
-            if (data) {
-                entry.innerHTML += `<br><span style="margin-left: 20px; color: #888; font-size: 10px;">${JSON.stringify(data, null, 2)}</span>`;
-            }
+        //     if (data) {
+        //         entry.innerHTML += `<br><span style="margin-left: 20px; color: #888; font-size: 10px;">${JSON.stringify(data, null, 2)}</span>`;
+        //     }
             
-            logDiv.appendChild(entry);
-            logDiv.scrollTop = logDiv.scrollHeight;
+        //     logDiv.appendChild(entry);
+        //     logDiv.scrollTop = logDiv.scrollHeight;
             
-            // Also log to console
-            console.log(`[${time}] ${message}`, data || '');
-        }
+        //     // Also log to console
+        //     console.log(`[${time}] ${message}`, data || '');
+        // }
         
         // Clear debug console
         // function clearDebug() {
