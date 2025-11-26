@@ -474,7 +474,7 @@
         
          
         /* Debug Console */
-        .debug-console {
+        /* .debug-console {
             position: fixed;
             bottom: 10px;
             right: 10px;
@@ -519,7 +519,7 @@
         
         .debug-success { color: #0f0; }
         .debug-error { color: #f00; }
-        .debug-info { color: #ff0; } 
+        .debug-info { color: #ff0; }  */
      
         /* Mobile Responsiveness */
         @media (max-width: 600px) {
@@ -1006,12 +1006,12 @@
     </div>
     
     <!-- Debug Console -->
-    <div class="debug-console">
+    <!-- <div class="debug-console">
         <h4>🔧 Debug Console</h4>
         <div id="debugLog"></div>
         <button class="debug-test-btn" onclick="sendTestData()">Send Test Data</button>
         <button class="debug-test-btn" onclick="clearDebug()">Clear</button>
-    </div>
+    </div> -->
 
     <script>
         // Google Apps Script Web App URL - YOUR ACTUAL URL
@@ -1045,9 +1045,9 @@
         }
         
         // Clear debug console
-        function clearDebug() {
-            document.getElementById('debugLog').innerHTML = '';
-            debugLog('Console cleared', 'info');
+        // function clearDebug() {
+        //     document.getElementById('debugLog').innerHTML = '';
+        //     debugLog('Console cleared', 'info');
         }
         
         // Send test data function
